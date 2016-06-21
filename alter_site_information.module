@@ -1,0 +1,66 @@
+<?php
+function alter_site_information_menu() {
+	
+	$items = array();
+	$items['json/node/%'] = array(								// Menu Hook to Genrate JSON of a node
+		'title' => 'JSON Representation of a given node',     	 	
+		'description' => 'JSON Representation of a given node', 
+		'page callback' => 'json_representation', 	
+		'access arguments' => array('json representation'),
+		'access callback' => 'user_access',
+		'type' => MENU_NORMAL_ITEM,
+		'weight' => 1,
+	  	);
+	return $items;
+}
+
+function alter_site_information_form_alter(&$form, $form_state, $form_id){
+	
+	if($form_id == 'system_site_information_settings'){ 					// Checking FORM ID
+	
+	if(variable_get('siteapikey') != NULL){			//Checking whether the value already stored in DB or not. If not the value has been set to "No API key yet" by default.
+			$default_API_value = variable_get('siteapikey'); 
+		}
+	else{
+			$default_API_value = t("No API key yet");
+		}
+		$form['api_key'] = array(											// Adding Site API field.
+							'#type' => 'textfield',	
+							'#title' => t('Site API Key'),
+							'#required' => TRUE,
+							'#default_value' => $default_API_value, 		
+							);
+							
+		$form['actions']['submit']['#value'] = t('Update Configuration'); 	//Altering Submit Button
+		
+		$form['#submit'][1]='alter_site_information_form_submit';			//Declearing Submit hook
+		
+		}
+		
+	return $form;
+	
+	}
+function alter_site_information_form_submit($form, &$form_state) {
+
+	 variable_set('siteapikey', $form_state['values']['api_key']); 	//Defining system variable and also stored in DB.
+	 
+	 drupal_set_message(t('Site API Key has been saved with that value.'));
+	}
+	
+function json_representation(){
+	global $siteapikey;
+	$node_id = arg(2);
+	$node_status = node_load($node_id)->status; // Checking whether given node exists or not.
+	$node_type = node_load($node_id)->type; // Checking the node type is page or not.
+	/*Checking previously submitted API Key and a node id (nid) of an appropriate node are present or not.*/
+	if($node_status == 1 && $node_type == 'page' && variable_get('siteapikey') != "No API key yet"){ 
+			/** Redirect url to generate JSON representation of that node. **/
+		drupal_goto($GLOBALS['base_url'].'/page_json/FOOBAR12345/node/'.$node_id.'.json'); 
+	}
+	else{
+		echo 'Access Denied';
+	}
+	
+	
+}
+	
