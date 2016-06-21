@@ -1,0 +1,14 @@
+; $Id: alter_site_information.info,v 1.0.0.0 2016/06/21 Surajit Mitra $
+name = Alter Site Information form
+description = This module is for altering site information form.
+package = Core - optional
+core = 7.x
+php = 5.x
+version = 1.2 
+; $Id: alter_site_information.info,v 1.0.0.0 2016/06/21 Surajit Mitra $
+name = Alter Site Information form
+description = This module is for altering site information form.
+package = Core - optional
+core = 7.x
+php = 5.x
+version = 1.2 
